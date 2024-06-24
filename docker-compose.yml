@@ -9,8 +9,8 @@ services:
       - MYSQL_ROOT_PASSWORD=Thanhliem2612.
     ports:
       - '3307:3306'
-    expose:
-      - 3306
+    networks:
+      - my_network
 
   be-nodejs:
     build:
@@ -23,9 +23,11 @@ services:
       - DEV_DB_NAME=WoodenFurnitureStore
       - URL_FE_CORS=http://localhost
       - DEV_DB_USERNAME=root
-    depends_on:
-      - database-mysql
     ports:
-         - 8080:8080
-    expose:
-      - 8080
+      - '8080:8080'
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
