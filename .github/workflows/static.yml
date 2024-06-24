@@ -22,7 +22,7 @@ jobs:
         run: npm install
 
       - name: Build the project
-        run: npm run build-src 
+        run: npm run build-src
 
   deploy:
     runs-on: ubuntu-latest
@@ -36,7 +36,7 @@ jobs:
         run: echo "$SSH_PRIVATE_KEY" > private_key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          
+
       - name: Set permissions on private key
         run: chmod 600 private_key
 
@@ -45,14 +45,14 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add private_key
 
-      - name: Deploy to EC2
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          EC2_IP_ADDRESS: ${{ secrets.EC2_IP_ADDRESS }}
-        run: |
-          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@$EC2_IP_ADDRESS
-            cd /home/wooden-furniture-be
-            git pull origin production
-            docker-compose down
-            docker-compose up -d --build
-            exit
+      - name: Change to project directory
+        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && pwd'
+
+      - name: Pull latest code
+        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && git pull origin production'
+
+      - name: Stop running containers
+        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && docker-compose down'
+
+      - name: Start containers with new build
+        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && docker-compose up -d --build'
