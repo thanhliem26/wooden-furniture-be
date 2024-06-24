@@ -1,0 +1,58 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - production
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build-src 
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Copy SSH key
+        run: echo "$SSH_PRIVATE_KEY" > private_key
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          
+      - name: Set permissions on private key
+        run: chmod 600 private_key
+
+      - name: Add SSH key to agent
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add private_key
+
+      - name: Deploy to EC2
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_IP_ADDRESS: ${{ secrets.EC2_IP_ADDRESS }}
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key ubuntu@$EC2_IP_ADDRESS
+            cd /home/wooden-furniture-be
+            git pull origin production
+            docker-compose down
+            docker-compose up -d --build
+            exit
