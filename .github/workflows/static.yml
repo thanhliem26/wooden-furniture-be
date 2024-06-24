@@ -49,10 +49,10 @@ jobs:
         run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && pwd'
 
       - name: Pull latest code
-        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && git pull origin production'
+        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && sudo git pull origin production'
 
       - name: Stop running containers
-        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && docker-compose down'
+        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && sudo docker-compose down'
 
       - name: Start containers with new build
-        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && docker-compose up -d --build'
+        run: ssh -o StrictHostKeyChecking=no -i private_key ubuntu@${{ secrets.EC2_IP_ADDRESS }} 'cd /home/wooden-furniture-be && sudo docker-compose up -d --build'
