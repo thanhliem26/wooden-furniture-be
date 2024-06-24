@@ -29,3 +29,4 @@ services:
          - 8080:8080
     expose:
       - 8080
+    container_name: my_be_nodejs
