@@ -43,7 +43,6 @@ app.use((req, res, next) => {
 
 app.use((error, req, res, next) => {
   const statusCode = error.status || 500;
-  console.log("🚀 ~ statusCode:", statusCode)
 
   return res.status(statusCode).json({
     status: "error",
