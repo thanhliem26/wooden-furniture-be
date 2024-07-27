@@ -2,6 +2,7 @@
 import express from "express";
 import { connection } from "./config/connectDB";
 import cors from "cors";
+// import { sendEmailAWS } from "./utils/send-mail-aws";
 const morgan = require("morgan");
 const helmet = require("helmet");
 const compression = require("compression");
@@ -30,6 +31,7 @@ app.use(cors(corsOptions));
 
 //init db
 connection();
+// sendEmailAWS()
 
 //init route
 app.use("/", require("./routers"));
