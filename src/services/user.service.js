@@ -131,10 +131,15 @@ class UserService {
 
     return await db.User.findAndCountAll({
       where: {
-        [Op.or]: [
-          { fullName: { [Op.like]: `%${valueSearch}%` } },
-          { email: { [Op.like]: `%${valueSearch}%` } },
-          { phoneNumber: { [Op.like]: `%${valueSearch}%` } },
+        [Op.and]: [
+          { deleteFlg: "0" },
+          {
+            [Op.or]: [
+              { fullName: { [Op.like]: `%${valueSearch}%` } },
+              { email: { [Op.like]: `%${valueSearch}%` } },
+              { phoneNumber: { [Op.like]: `%${valueSearch}%` } },
+            ],
+          },
         ],
       },
       attributes: { exclude: ["password"] },

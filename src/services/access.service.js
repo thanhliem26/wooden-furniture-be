@@ -5,7 +5,6 @@ const tokenService = require("./token.service");
 const { createTokenPair, verifyJWT } = require("../auth/authUtils");
 const {
   BadRequestError,
-  ConflictRequestError,
   AuthFailureError,
   ForbiddenError,
 } = require("../core/error.response");
@@ -15,8 +14,8 @@ import { validateUser, createNewUser } from "../models/repository/user.repo";
 import { deleteFIleUpload, getInfoData } from "../utils";
 import { deleteFileS3, uploadFileS3 } from "../utils/aws";
 import moment from "moment";
-import { sendMailSingUP } from "../utils/sendMail";
 import { TYPE_LOGIN_PROVIDER } from "../constants";
+import { sendEmailAWSSignUp } from "../utils/send-mail-aws";
 const fs = require("fs").promises;
 
 class AccessService {
@@ -169,7 +168,7 @@ class AccessService {
       refreshToken: tokens.accessToken,
     });
 
-    sendMailSingUP({ data, token: tokens.accessToken });
+    sendEmailAWSSignUp({ data, token: tokens.accessToken });
   };
 
   static signUp = async (data) => {
