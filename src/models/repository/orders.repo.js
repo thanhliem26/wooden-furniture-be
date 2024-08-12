@@ -1,8 +1,8 @@
 import { ORDER_STATUS } from "../../constants";
 import { BadRequestError } from "../../core/error.response";
 import db, { sequelize } from "../index";
-import { sendMailOrderForShop, sendMailWhenOrder } from "../../utils/sendMail";
 import AboutUsService from '../../services/aboutUs.service';
+import { sendMailAWSOrderForShop, sendMailAWSWhenOrder } from "../../utils/send-mail-aws";
 
 const validateOrder = async (payload) => {
   const newOrder = await db.Orders.build({
@@ -69,8 +69,8 @@ const updateOrder = async (payload) => {
     payload?.order_status === ORDER_STATUS.WAIT_CONFIRMATION
   ) {
     const activeAB = await AboutUsService.getActiveAbout();
-    sendMailWhenOrder({ orderDetail, order, activeAB });
-    sendMailOrderForShop({ orderDetail, order, activeAB });
+    sendMailAWSWhenOrder({ orderDetail, order, activeAB });
+    sendMailAWSOrderForShop({ orderDetail, order, activeAB });
   }
 
   for (let property in payload) {
